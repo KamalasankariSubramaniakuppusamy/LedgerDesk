@@ -1,0 +1,12 @@
+[
+  {"merchant_id": "MID-WFM-1042", "name": "Whole Foods Market #1042", "mcc": "5411", "category": "Grocery", "city": "Austin", "state": "TX"},
+  {"merchant_id": "MID-HGI-ATX", "name": "Hilton Garden Inn - Austin", "mcc": "7011", "category": "Hotels/Lodging", "city": "Austin", "state": "TX"},
+  {"merchant_id": "MID-AMZ-001", "name": "Amazon.com", "mcc": "5942", "category": "E-commerce", "city": "Seattle", "state": "WA"},
+  {"merchant_id": "MID-DAL-001", "name": "Delta Air Lines", "mcc": "3058", "category": "Airlines", "city": "Atlanta", "state": "GA"},
+  {"merchant_id": "MID-BBY-0734", "name": "Best Buy #0734", "mcc": "5732", "category": "Electronics", "city": "Dallas", "state": "TX"},
+  {"merchant_id": "MID-UBER-EATS", "name": "Uber Eats", "mcc": "5812", "category": "Restaurants/Delivery", "city": "San Francisco", "state": "CA"},
+  {"merchant_id": "MID-PASC-001", "name": "Premium Auto Service Center", "mcc": "7538", "category": "Auto Service", "city": "Houston", "state": "TX"},
+  {"merchant_id": "MID-ERC-001", "name": "Enterprise Rent-A-Car", "mcc": "7512", "category": "Car Rental", "city": "St. Louis", "state": "MO"},
+  {"merchant_id": "MID-SHELL-4421", "name": "Shell Oil #4421", "mcc": "5541", "category": "Gas Station", "city": "Austin", "state": "TX"},
+  {"merchant_id": "MID-NORD-0122", "name": "Nordstrom #0122", "mcc": "5651", "category": "Department Store", "city": "Dallas", "state": "TX"}
+]

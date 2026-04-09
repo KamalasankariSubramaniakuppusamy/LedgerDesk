@@ -1,0 +1,38 @@
+[
+  {
+    "settlement_id": "STL-20240315-WFM-001",
+    "transaction_id": "TXN-9382741",
+    "merchant_id": "MID-WFM-1042",
+    "amount": 127.43,
+    "batch_date": "2024-03-15T23:45:00Z",
+    "processor": "VISA-NET",
+    "status": "completed"
+  },
+  {
+    "settlement_id": "STL-20240316-WFM-002",
+    "transaction_id": "TXN-9382742",
+    "merchant_id": "MID-WFM-1042",
+    "amount": 127.43,
+    "batch_date": "2024-03-16T23:30:00Z",
+    "processor": "VISA-NET",
+    "status": "completed"
+  },
+  {
+    "settlement_id": "STL-20240311-HGI-001",
+    "transaction_id": "TXN-9382857",
+    "merchant_id": "MID-HGI-ATX",
+    "amount": 387.50,
+    "batch_date": "2024-03-11T23:15:00Z",
+    "processor": "AMEX-NET",
+    "status": "completed"
+  },
+  {
+    "settlement_id": "STL-20240220-DAL-001",
+    "transaction_id": "TXN-9380012",
+    "merchant_id": "MID-DAL-001",
+    "amount": 1247.00,
+    "batch_date": null,
+    "processor": "AMEX-NET",
+    "status": "pending"
+  }
+]

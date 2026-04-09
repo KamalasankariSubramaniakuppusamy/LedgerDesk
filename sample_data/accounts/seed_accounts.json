@@ -1,0 +1,122 @@
+[
+  {
+    "account_id": "ACCT-4421889",
+    "cardholder_name": "Sarah Mitchell",
+    "card_last_four": "4821",
+    "account_type": "platinum",
+    "status": "active",
+    "credit_limit": 15000.00,
+    "available_credit": 11234.57,
+    "open_date": "2019-06-15",
+    "fraud_flags": [],
+    "prior_disputes": 0
+  },
+  {
+    "account_id": "ACCT-5517234",
+    "cardholder_name": "James Rivera",
+    "card_last_four": "9312",
+    "account_type": "gold",
+    "status": "active",
+    "credit_limit": 25000.00,
+    "available_credit": 18762.50,
+    "open_date": "2017-11-20",
+    "fraud_flags": [],
+    "prior_disputes": 1
+  },
+  {
+    "account_id": "ACCT-3398127",
+    "cardholder_name": "Emily Chen",
+    "card_last_four": "2277",
+    "account_type": "green",
+    "status": "active",
+    "credit_limit": 8000.00,
+    "available_credit": 5421.88,
+    "open_date": "2021-03-10",
+    "fraud_flags": [],
+    "prior_disputes": 0
+  },
+  {
+    "account_id": "ACCT-6612445",
+    "cardholder_name": "Michael Torres",
+    "card_last_four": "7788",
+    "account_type": "platinum",
+    "status": "active",
+    "credit_limit": 30000.00,
+    "available_credit": 22341.00,
+    "open_date": "2016-08-05",
+    "fraud_flags": [],
+    "prior_disputes": 2
+  },
+  {
+    "account_id": "ACCT-7789231",
+    "cardholder_name": "Amanda Foster",
+    "card_last_four": "5543",
+    "account_type": "gold",
+    "status": "active",
+    "credit_limit": 20000.00,
+    "available_credit": 14557.05,
+    "open_date": "2020-01-22",
+    "fraud_flags": [],
+    "prior_disputes": 0
+  },
+  {
+    "account_id": "ACCT-2245671",
+    "cardholder_name": "David Park",
+    "card_last_four": "3391",
+    "account_type": "green",
+    "status": "active",
+    "credit_limit": 10000.00,
+    "available_credit": 7823.45,
+    "open_date": "2022-07-14",
+    "fraud_flags": [],
+    "prior_disputes": 0
+  },
+  {
+    "account_id": "ACCT-8834521",
+    "cardholder_name": "Robert Williams",
+    "card_last_four": "8821",
+    "account_type": "centurion",
+    "status": "active",
+    "credit_limit": 100000.00,
+    "available_credit": 73500.00,
+    "open_date": "2014-02-28",
+    "fraud_flags": [],
+    "prior_disputes": 1
+  },
+  {
+    "account_id": "ACCT-1123987",
+    "cardholder_name": "Lisa Johnson",
+    "card_last_four": "6654",
+    "account_type": "gold",
+    "status": "active",
+    "credit_limit": 18000.00,
+    "available_credit": 12037.50,
+    "open_date": "2018-09-03",
+    "fraud_flags": [],
+    "prior_disputes": 0
+  },
+  {
+    "account_id": "ACCT-9945672",
+    "cardholder_name": "Kevin Brown",
+    "card_last_four": "1198",
+    "account_type": "green",
+    "status": "active",
+    "credit_limit": 6000.00,
+    "available_credit": 3214.86,
+    "open_date": "2023-01-18",
+    "fraud_flags": ["velocity_alert_2024_02"],
+    "prior_disputes": 3
+  },
+  {
+    "account_id": "ACCT-5567891",
+    "cardholder_name": "Rachel Kim",
+    "card_last_four": "7732",
+    "account_type": "platinum",
+    "status": "active",
+    "credit_limit": 22000.00,
+    "available_credit": 18234.50,
+    "open_date": "2019-12-01",
+    "fraud_flags": [],
+    "prior_disputes": 0
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "refund_id": "REF-AMZ-20240301-001",
+    "original_transaction_id": "TXN-9381204",
+    "account_id": "ACCT-3398127",
+    "merchant_name": "Amazon.com",
+    "arn": "REF-AMZ-20240228-7741",
+    "amount": 89.99,
+    "currency": "USD",
+    "initiated_date": "2024-03-01T10:00:00Z",
+    "expected_post_date": "2024-03-11T00:00:00Z",
+    "actual_post_date": null,
+    "status": "initiated_not_posted"
+  },
+  {
+    "refund_id": "REF-BBY-20240314-001",
+    "original_transaction_id": "TXN-9383102",
+    "account_id": "ACCT-7789231",
+    "merchant_name": "Best Buy #0734",
+    "arn": "REF-BBY-20240314-3345",
+    "amount": 342.98,
+    "currency": "USD",
+    "initiated_date": "2024-03-14T16:00:00Z",
+    "expected_post_date": "2024-03-19T00:00:00Z",
+    "actual_post_date": "2024-03-18T23:30:00Z",
+    "status": "posted"
+  },
+  {
+    "refund_id": "REF-NORD-20240315-001",
+    "original_transaction_id": "TXN-9384330",
+    "account_id": "ACCT-5567891",
+    "merchant_name": "Nordstrom #0122",
+    "arn": "REF-NORD-20240315-8845",
+    "amount": 234.50,
+    "currency": "USD",
+    "initiated_date": "2024-03-15T12:00:00Z",
+    "expected_post_date": "2024-03-22T00:00:00Z",
+    "actual_post_date": "2024-03-15T23:45:00Z",
+    "status": "posted"
+  }
+]
