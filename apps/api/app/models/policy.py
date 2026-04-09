@@ -1,4 +1,5 @@
 """Policy document and chunk models."""
+
 import uuid
 
 from sqlalchemy import ForeignKey, Integer, String, Text

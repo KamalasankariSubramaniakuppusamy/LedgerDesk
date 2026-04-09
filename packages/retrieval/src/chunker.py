@@ -1,4 +1,5 @@
 """Document chunking for policy documents."""
+
 import re
 import uuid
 from dataclasses import dataclass, field
@@ -15,9 +16,11 @@ class Chunk:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
 
 
-def chunk_markdown(content: str, max_chunk_size: int = 1500, overlap: int = 200) -> list[Chunk]:
+def chunk_markdown(
+    content: str, max_chunk_size: int = 1500, overlap: int = 200
+) -> list[Chunk]:
     """Chunk markdown content by sections, with size limits."""
-    sections = re.split(r'\n(?=###?\s)', content)
+    sections = re.split(r"\n(?=###?\s)", content)
     chunks: list[Chunk] = []
 
     for section in sections:
@@ -26,26 +29,30 @@ def chunk_markdown(content: str, max_chunk_size: int = 1500, overlap: int = 200)
             continue
 
         # Extract section title
-        title_match = re.match(r'^#{1,4}\s+(.+)', section)
+        title_match = re.match(r"^#{1,4}\s+(.+)", section)
         section_title = title_match.group(1).strip() if title_match else None
 
         if len(section) <= max_chunk_size:
-            chunks.append(Chunk(
-                content=section,
-                chunk_index=len(chunks),
-                section_title=section_title,
-            ))
+            chunks.append(
+                Chunk(
+                    content=section,
+                    chunk_index=len(chunks),
+                    section_title=section_title,
+                )
+            )
         else:
             # Split large sections by paragraphs
-            paragraphs = section.split('\n\n')
+            paragraphs = section.split("\n\n")
             current = ""
             for para in paragraphs:
                 if len(current) + len(para) + 2 > max_chunk_size and current:
-                    chunks.append(Chunk(
-                        content=current.strip(),
-                        chunk_index=len(chunks),
-                        section_title=section_title,
-                    ))
+                    chunks.append(
+                        Chunk(
+                            content=current.strip(),
+                            chunk_index=len(chunks),
+                            section_title=section_title,
+                        )
+                    )
                     # Keep overlap from end of previous chunk
                     if overlap > 0 and len(current) > overlap:
                         current = current[-overlap:] + "\n\n" + para
@@ -55,11 +62,13 @@ def chunk_markdown(content: str, max_chunk_size: int = 1500, overlap: int = 200)
                     current = current + "\n\n" + para if current else para
 
             if current.strip():
-                chunks.append(Chunk(
-                    content=current.strip(),
-                    chunk_index=len(chunks),
-                    section_title=section_title,
-                ))
+                chunks.append(
+                    Chunk(
+                        content=current.strip(),
+                        chunk_index=len(chunks),
+                        section_title=section_title,
+                    )
+                )
 
     return chunks
 

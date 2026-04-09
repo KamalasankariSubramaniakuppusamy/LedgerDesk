@@ -1,4 +1,5 @@
 """Test mock tool services."""
+
 import json
 from pathlib import Path
 
@@ -46,8 +47,9 @@ class TestSeedDataIntegrity:
         txn_ids = {t["transaction_id"] for t in txns}
         for case in cases:
             if case.get("transaction_id"):
-                assert case["transaction_id"] in txn_ids, \
+                assert case["transaction_id"] in txn_ids, (
                     f"Case {case['case_number']} references unknown transaction {case['transaction_id']}"
+                )
 
     def test_cases_reference_valid_accounts(self):
         cases = self._load("cases", "seed_cases.json")
@@ -55,8 +57,9 @@ class TestSeedDataIntegrity:
         acct_ids = {a["account_id"] for a in accounts}
         for case in cases:
             if case.get("account_id"):
-                assert case["account_id"] in acct_ids, \
+                assert case["account_id"] in acct_ids, (
                     f"Case {case['case_number']} references unknown account {case['account_id']}"
+                )
 
     def test_policies_exist(self):
         policies_dir = DATA_DIR / "policies"
@@ -77,7 +80,9 @@ class TestToolOutputContracts:
     """Test that tool output contracts are valid."""
 
     def test_transaction_timeline_output_shape(self):
-        txns = json.loads((DATA_DIR / "transactions" / "seed_transactions.json").read_text())
+        txns = json.loads(
+            (DATA_DIR / "transactions" / "seed_transactions.json").read_text()
+        )
         # Simulate get_transaction_timeline
         result = {
             "transaction_id": "TXN-9382741",
@@ -90,7 +95,9 @@ class TestToolOutputContracts:
         assert len(result["timeline"]) == 2
 
     def test_account_activity_output_shape(self):
-        accounts = json.loads((DATA_DIR / "accounts" / "seed_accounts.json").read_text())
+        accounts = json.loads(
+            (DATA_DIR / "accounts" / "seed_accounts.json").read_text()
+        )
         acct = next(a for a in accounts if a["account_id"] == "ACCT-4421889")
         result = {
             "account_id": "ACCT-4421889",

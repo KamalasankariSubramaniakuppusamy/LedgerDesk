@@ -1,4 +1,5 @@
 """Base model with common fields."""
+
 from datetime import datetime
 
 from sqlalchemy import DateTime, String, text

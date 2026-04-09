@@ -1,4 +1,5 @@
 """Integration tests for the API."""
+
 import pytest
 import httpx
 
@@ -41,11 +42,14 @@ class TestCaseEndpoints:
         assert resp.status_code == 200
 
     def test_create_case(self, api_client):
-        resp = api_client.post("/api/v1/cases", json={
-            "title": "Integration Test Case",
-            "description": "Created by integration test",
-            "priority": "low",
-        })
+        resp = api_client.post(
+            "/api/v1/cases",
+            json={
+                "title": "Integration Test Case",
+                "description": "Created by integration test",
+                "priority": "low",
+            },
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["title"] == "Integration Test Case"
@@ -54,10 +58,13 @@ class TestCaseEndpoints:
 
     def test_get_case(self, api_client):
         # Create first
-        create_resp = api_client.post("/api/v1/cases", json={
-            "title": "Get Test Case",
-            "description": "For get test",
-        })
+        create_resp = api_client.post(
+            "/api/v1/cases",
+            json={
+                "title": "Get Test Case",
+                "description": "For get test",
+            },
+        )
         case_id = create_resp.json()["id"]
 
         # Get
@@ -89,20 +96,26 @@ class TestMetricsEndpoints:
 
 class TestToolEndpoints:
     def test_execute_tool(self, api_client):
-        resp = api_client.post("/api/v1/tools/execute", json={
-            "tool_name": "get_transaction_timeline",
-            "params": {"transaction_id": "TXN-9382741"},
-        })
+        resp = api_client.post(
+            "/api/v1/tools/execute",
+            json={
+                "tool_name": "get_transaction_timeline",
+                "params": {"transaction_id": "TXN-9382741"},
+            },
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["status"] == "success"
         assert "data" in data
 
     def test_execute_unknown_tool(self, api_client):
-        resp = api_client.post("/api/v1/tools/execute", json={
-            "tool_name": "nonexistent_tool",
-            "params": {},
-        })
+        resp = api_client.post(
+            "/api/v1/tools/execute",
+            json={
+                "tool_name": "nonexistent_tool",
+                "params": {},
+            },
+        )
         assert resp.status_code == 400
 
 

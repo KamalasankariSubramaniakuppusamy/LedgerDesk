@@ -1,4 +1,5 @@
 """Case business logic service."""
+
 import uuid
 
 import structlog
@@ -61,7 +62,11 @@ class CaseService:
             action=f"status_transition_{old_status.value}_to_{new_status.value}",
             resource_type="case",
             resource_id=str(case.id),
-            details={"from": old_status.value, "to": new_status.value, "reason": reason},
+            details={
+                "from": old_status.value,
+                "to": new_status.value,
+                "reason": reason,
+            },
             trace_id=case.trace_id,
         )
         self.db.add(audit)
@@ -82,7 +87,10 @@ class CaseService:
         valid_transitions = STATUS_TRANSITIONS.get(action_type, {})
         new_status = valid_transitions.get(case.status)
 
-        if action_type in ("approve", "reject", "escalate", "reopen") and not new_status:
+        if (
+            action_type in ("approve", "reject", "escalate", "reopen")
+            and not new_status
+        ):
             return {
                 "success": False,
                 "error": f"Cannot {action_type} a case in status '{case.status.value}'",

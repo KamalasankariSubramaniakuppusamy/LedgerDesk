@@ -1,4 +1,5 @@
 """Metrics and dashboard endpoints."""
+
 import structlog
 from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
@@ -19,34 +20,41 @@ async def dashboard_metrics(db: AsyncSession = Depends(get_db)):
     status_result = await db.execute(
         select(Case.status, func.count(Case.id)).group_by(Case.status)
     )
-    status_counts = {row[0].value if hasattr(row[0], 'value') else row[0]: row[1] for row in status_result.all()}
+    status_counts = {
+        row[0].value if hasattr(row[0], "value") else row[0]: row[1]
+        for row in status_result.all()
+    }
 
     # Priority distribution
     priority_result = await db.execute(
         select(Case.priority, func.count(Case.id)).group_by(Case.priority)
     )
-    priority_counts = {row[0].value if hasattr(row[0], 'value') else row[0]: row[1] for row in priority_result.all()}
+    priority_counts = {
+        row[0].value if hasattr(row[0], "value") else row[0]: row[1]
+        for row in priority_result.all()
+    }
 
     # Total cases
     total = (await db.execute(select(func.count(Case.id)))).scalar() or 0
 
     # Action counts
     action_result = await db.execute(
-        select(AnalystAction.action_type, func.count(AnalystAction.id))
-        .group_by(AnalystAction.action_type)
+        select(AnalystAction.action_type, func.count(AnalystAction.id)).group_by(
+            AnalystAction.action_type
+        )
     )
     action_counts = dict(action_result.all())
 
     # Average confidence
-    avg_confidence = (await db.execute(
-        select(func.avg(Recommendation.confidence_score))
-    )).scalar()
+    avg_confidence = (
+        await db.execute(select(func.avg(Recommendation.confidence_score)))
+    ).scalar()
 
     # Tool invocation stats
     tool_count = (await db.execute(select(func.count(ToolInvocation.id)))).scalar() or 0
-    avg_tool_latency = (await db.execute(
-        select(func.avg(ToolInvocation.duration_ms))
-    )).scalar()
+    avg_tool_latency = (
+        await db.execute(select(func.avg(ToolInvocation.duration_ms)))
+    ).scalar()
 
     return {
         "total_cases": total,
@@ -55,8 +63,12 @@ async def dashboard_metrics(db: AsyncSession = Depends(get_db)):
         "analyst_actions": action_counts,
         "average_confidence": round(avg_confidence, 3) if avg_confidence else None,
         "total_tool_invocations": tool_count,
-        "average_tool_latency_ms": round(avg_tool_latency, 1) if avg_tool_latency else None,
-        "approval_rate": _calc_rate(action_counts.get("approve", 0), action_counts.get("reject", 0)),
+        "average_tool_latency_ms": round(avg_tool_latency, 1)
+        if avg_tool_latency
+        else None,
+        "approval_rate": _calc_rate(
+            action_counts.get("approve", 0), action_counts.get("reject", 0)
+        ),
     }
 
 

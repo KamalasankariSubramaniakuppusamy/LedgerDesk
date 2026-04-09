@@ -1,10 +1,14 @@
 """Evaluation test runner."""
+
 import asyncio
 from pathlib import Path
 
 from .evaluator import (
-    EvalResult, EvalSummary,
-    load_eval_cases, compute_summary, format_eval_report,
+    EvalResult,
+    EvalSummary,
+    load_eval_cases,
+    compute_summary,
+    format_eval_report,
 )
 
 
@@ -35,10 +39,12 @@ async def run_evaluation_batch(
         for eval_case in eval_cases:
             api_case = case_map.get(eval_case.case_number)
             if not api_case:
-                results.append(EvalResult(
-                    case_number=eval_case.case_number,
-                    errors=["Case not found in API"],
-                ))
+                results.append(
+                    EvalResult(
+                        case_number=eval_case.case_number,
+                        errors=["Case not found in API"],
+                    )
+                )
                 continue
 
             result = EvalResult(case_number=eval_case.case_number)
@@ -82,7 +88,9 @@ async def run_evaluation_batch(
                 result.errors.append(str(e))
 
             results.append(result)
-            print(f"  Evaluated: {eval_case.case_number} - {'OK' if not result.errors else 'ERRORS'}")
+            print(
+                f"  Evaluated: {eval_case.case_number} - {'OK' if not result.errors else 'ERRORS'}"
+            )
 
     summary = compute_summary(results)
     print(format_eval_report(summary))

@@ -1,4 +1,5 @@
 """Structured logging configuration."""
+
 import logging
 import structlog
 from app.core.config import settings
@@ -12,7 +13,8 @@ def setup_logging():
             structlog.processors.StackInfoRenderer(),
             structlog.dev.set_exc_info,
             structlog.processors.TimeStamper(fmt="iso"),
-            structlog.processors.JSONRenderer() if settings.environment == "production"
+            structlog.processors.JSONRenderer()
+            if settings.environment == "production"
             else structlog.dev.ConsoleRenderer(),
         ],
         wrapper_class=structlog.make_filtering_bound_logger(

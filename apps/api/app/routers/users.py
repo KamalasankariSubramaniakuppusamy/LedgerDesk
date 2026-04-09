@@ -1,4 +1,5 @@
 """User management endpoints (admin only)."""
+
 import uuid
 
 import structlog
@@ -42,14 +43,14 @@ class UserResponse(BaseModel):
 @router.get("")
 async def list_users(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).order_by(User.full_name))
-    users  = result.scalars().all()
+    users = result.scalars().all()
     return [
         {
-            "id":         str(u.id),
-            "email":      u.email,
-            "full_name":  u.full_name,
-            "role":       u.role,
-            "is_active":  u.is_active,
+            "id": str(u.id),
+            "email": u.email,
+            "full_name": u.full_name,
+            "role": u.role,
+            "is_active": u.is_active,
             "created_at": str(u.created_at),
         }
         for u in users
@@ -64,7 +65,10 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)):
 
     valid_roles = {"analyst", "senior_analyst", "supervisor", "admin"}
     if body.role not in valid_roles:
-        raise HTTPException(status_code=422, detail=f"Invalid role. Must be one of: {', '.join(valid_roles)}")
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid role. Must be one of: {', '.join(valid_roles)}",
+        )
 
     user = User(
         email=body.email,
@@ -75,13 +79,20 @@ async def create_user(body: UserCreate, db: AsyncSession = Depends(get_db)):
     db.add(user)
     await db.flush()
     logger.info("user_created", user_id=str(user.id), email=user.email, role=user.role)
-    return {"id": str(user.id), "email": user.email, "full_name": user.full_name, "role": user.role}
+    return {
+        "id": str(user.id),
+        "email": user.email,
+        "full_name": user.full_name,
+        "role": user.role,
+    }
 
 
 @router.patch("/{user_id}")
-async def update_user(user_id: uuid.UUID, body: UserUpdate, db: AsyncSession = Depends(get_db)):
+async def update_user(
+    user_id: uuid.UUID, body: UserUpdate, db: AsyncSession = Depends(get_db)
+):
     result = await db.execute(select(User).where(User.id == user_id))
-    user   = result.scalar_one_or_none()
+    user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -93,14 +104,19 @@ async def update_user(user_id: uuid.UUID, body: UserUpdate, db: AsyncSession = D
         user.is_active = body.is_active
 
     await db.flush()
-    return {"id": str(user.id), "email": user.email, "full_name": user.full_name,
-            "role": user.role, "is_active": user.is_active}
+    return {
+        "id": str(user.id),
+        "email": user.email,
+        "full_name": user.full_name,
+        "role": user.role,
+        "is_active": user.is_active,
+    }
 
 
 @router.delete("/{user_id}", status_code=204)
 async def deactivate_user(user_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.id == user_id))
-    user   = result.scalar_one_or_none()
+    user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     user.is_active = False

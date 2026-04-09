@@ -1,4 +1,5 @@
 """Mock internal tool service endpoints."""
+
 import json
 import time
 import uuid
@@ -70,7 +71,9 @@ async def execute_tool(req: ToolRequest, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail=f"Unknown tool: {req.tool_name}")
 
     try:
-        result = handler(req.params, transactions, accounts, settlements, refunds, merchants)
+        result = handler(
+            req.params, transactions, accounts, settlements, refunds, merchants
+        )
         status = "success"
         error = None
     except Exception as e:
@@ -95,7 +98,9 @@ async def execute_tool(req: ToolRequest, db: AsyncSession = Depends(get_db)):
     db.add(invocation)
     await db.flush()
 
-    logger.info("tool_executed", tool=req.tool_name, status=status, duration_ms=duration_ms)
+    logger.info(
+        "tool_executed", tool=req.tool_name, status=status, duration_ms=duration_ms
+    )
 
     return {
         "tool_name": req.tool_name,
@@ -140,7 +145,9 @@ def _get_account_activity(params, transactions, accounts, *_):
     return {
         "account_id": acct_id,
         "account_info": account,
-        "recent_transactions": sorted(acct_txns, key=lambda x: x.get("authorization_date", ""), reverse=True),
+        "recent_transactions": sorted(
+            acct_txns, key=lambda x: x.get("authorization_date", ""), reverse=True
+        ),
         "transaction_count": len(acct_txns),
     }
 
@@ -150,7 +157,11 @@ def _get_settlement_status(params, _, __, settlements, *___):
     if not ref_id:
         raise ValueError("reference_id or transaction_id is required")
 
-    matches = [s for s in settlements if s.get("transaction_id") == ref_id or s.get("settlement_id") == ref_id]
+    matches = [
+        s
+        for s in settlements
+        if s.get("transaction_id") == ref_id or s.get("settlement_id") == ref_id
+    ]
     return {
         "reference_id": ref_id,
         "settlements": matches,
@@ -163,7 +174,11 @@ def _get_refund_status(params, *_, refunds, **__):
     if not ref_id:
         raise ValueError("reference_id or transaction_id is required")
 
-    matches = [r for r in refunds if r.get("original_transaction_id") == ref_id or r.get("arn") == ref_id]
+    matches = [
+        r
+        for r in refunds
+        if r.get("original_transaction_id") == ref_id or r.get("arn") == ref_id
+    ]
     return {
         "reference_id": ref_id,
         "refunds": matches,
@@ -189,7 +204,15 @@ def _get_merchant_reference(params, *_, merchants=None):
     match = next((m for m in (merchants if isinstance(merchants, list) else [])), None)
     # Search through merchants list properly
     if isinstance(merchants, list):
-        match = next((m for m in merchants if m.get("merchant_id") == merchant_ref or merchant_ref in m.get("name", "")), None)
+        match = next(
+            (
+                m
+                for m in merchants
+                if m.get("merchant_id") == merchant_ref
+                or merchant_ref in m.get("name", "")
+            ),
+            None,
+        )
 
     return {
         "merchant_ref": merchant_ref,

@@ -1,4 +1,5 @@
 """Individual agent implementations."""
+
 import time
 import uuid
 from dataclasses import dataclass
@@ -9,8 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.agent import AgentRun
 from llm import LLMClient, MockLLMClient
 from prompts import (
-    TRIAGE_PROMPT, TOOL_PLANNER_PROMPT, DECISION_PROMPT,
-    SAFETY_GATE_PROMPT, CASE_WRITER_PROMPT,
+    TRIAGE_PROMPT,
+    TOOL_PLANNER_PROMPT,
+    DECISION_PROMPT,
+    SAFETY_GATE_PROMPT,
+    CASE_WRITER_PROMPT,
 )
 
 logger = structlog.get_logger()
@@ -169,9 +173,13 @@ async def run_safety_gate(
         confidence_score=recommendation.get("confidence_score", 0),
         rationale=recommendation.get("rationale", ""),
         amount=amount or "N/A",
-        required_approval_level=recommendation.get("required_approval_level", "analyst"),
+        required_approval_level=recommendation.get(
+            "required_approval_level", "analyst"
+        ),
         num_citations=len(recommendation.get("policy_citations", [])),
-        num_evidence=len(recommendation.get("evidence_summary", {}).get("supporting", [])),
+        num_evidence=len(
+            recommendation.get("evidence_summary", {}).get("supporting", [])
+        ),
     )
     return await _run_agent(db, case_id, "safety_gate", prompt, llm, trace_id)
 

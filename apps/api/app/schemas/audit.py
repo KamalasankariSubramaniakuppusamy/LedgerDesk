@@ -1,4 +1,5 @@
 """Audit schemas."""
+
 import uuid
 from datetime import datetime
 

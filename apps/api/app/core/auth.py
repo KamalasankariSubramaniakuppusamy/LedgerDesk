@@ -1,4 +1,5 @@
 """JWT authentication utilities and FastAPI dependencies."""
+
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
@@ -13,14 +14,15 @@ from app.core.config import settings
 from app.core.database import get_db
 from app.models.user import User
 
-ALGORITHM      = "HS256"
+ALGORITHM = "HS256"
 TOKEN_EXPIRE_H = 8
 
-pwd_context  = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
 # ── Password helpers ──────────────────────────────────────────────────────────
+
 
 def hash_password(plain: str) -> str:
     return pwd_context.hash(plain)
@@ -32,13 +34,14 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 # ── JWT helpers ───────────────────────────────────────────────────────────────
 
+
 def create_access_token(user: User) -> str:
     expire = datetime.now(timezone.utc) + timedelta(hours=TOKEN_EXPIRE_H)
     payload = {
-        "sub":   str(user.id),
+        "sub": str(user.id),
         "email": user.email,
-        "role":  user.role,
-        "exp":   expire,
+        "role": user.role,
+        "exp": expire,
     }
     return jwt.encode(payload, settings.secret_key, algorithm=ALGORITHM)
 
@@ -56,6 +59,7 @@ def decode_token(token: str) -> dict:
 
 # ── FastAPI dependencies ──────────────────────────────────────────────────────
 
+
 async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
     db: AsyncSession = Depends(get_db),
@@ -69,17 +73,23 @@ async def get_current_user(
     payload = decode_token(credentials.credentials)
     user_id = payload.get("sub")
     if not user_id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload"
+        )
 
     result = await db.execute(select(User).where(User.id == user_id))
-    user   = result.scalar_one_or_none()
+    user = result.scalar_one_or_none()
     if not user or not user.is_active:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found or inactive")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found or inactive",
+        )
     return user
 
 
 def require_role(*roles: str):
     """Dependency factory: require current user to have one of the given roles."""
+
     async def _check(current_user: User = Depends(get_current_user)) -> User:
         if current_user.role not in roles:
             raise HTTPException(
@@ -87,10 +97,11 @@ def require_role(*roles: str):
                 detail=f"Access denied. Required roles: {', '.join(roles)}",
             )
         return current_user
+
     return _check
 
 
 # Convenience pre-built dependencies
-require_admin      = require_role("admin")
+require_admin = require_role("admin")
 require_supervisor = require_role("admin", "supervisor")
-require_analyst    = require_role("admin", "supervisor", "senior_analyst", "analyst")
+require_analyst = require_role("admin", "supervisor", "senior_analyst", "analyst")

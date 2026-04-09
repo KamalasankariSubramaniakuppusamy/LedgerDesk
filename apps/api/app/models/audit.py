@@ -1,4 +1,5 @@
 """Audit and analyst action models."""
+
 import uuid
 from datetime import datetime
 
@@ -24,7 +25,9 @@ class AnalystAction(Base):
     recommendation_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("recommendations.id"), nullable=True
     )
-    action_type: Mapped[str] = mapped_column(String(50), nullable=False)  # approve, reject, edit, escalate, reassign, reopen, add_note
+    action_type: Mapped[str] = mapped_column(
+        String(50), nullable=False
+    )  # approve, reject, edit, escalate, reassign, reopen, add_note
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     extra_data: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
@@ -82,7 +85,9 @@ class EvaluationRun(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    run_type: Mapped[str] = mapped_column(String(50), nullable=False)  # batch, single, regression
+    run_type: Mapped[str] = mapped_column(
+        String(50), nullable=False
+    )  # batch, single, regression
     status: Mapped[str] = mapped_column(String(50), default="running")
     total_cases: Mapped[int] = mapped_column(nullable=False)
     completed_cases: Mapped[int] = mapped_column(default=0)

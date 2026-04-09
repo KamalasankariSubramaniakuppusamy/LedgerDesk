@@ -1,4 +1,5 @@
 """Policy document indexing service."""
+
 import uuid
 
 import structlog
@@ -31,7 +32,9 @@ async def index_policy_document(
 
     # Chunk the document
     chunks = chunk_policy_document(doc.title, doc.content, str(doc_id))
-    logger.info("indexing_document", doc_id=str(doc_id), title=doc.title, chunks=len(chunks))
+    logger.info(
+        "indexing_document", doc_id=str(doc_id), title=doc.title, chunks=len(chunks)
+    )
 
     # Generate embeddings and save chunks
     for chunk in chunks:
@@ -55,9 +58,7 @@ async def index_policy_document(
 
 async def index_all_policies(db: AsyncSession, api_key: str | None = None) -> dict:
     """Index all active policy documents."""
-    result = await db.execute(
-        select(PolicyDocument).where(PolicyDocument.is_active)
-    )
+    result = await db.execute(select(PolicyDocument).where(PolicyDocument.is_active))
     docs = result.scalars().all()
 
     total_chunks = 0

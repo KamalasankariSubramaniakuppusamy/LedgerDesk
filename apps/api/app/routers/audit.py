@@ -1,4 +1,5 @@
 """Audit trail endpoints."""
+
 import uuid
 
 import structlog
@@ -9,7 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.models.audit import AuditEvent
 from app.models.agent import ToolInvocation
-from app.schemas.audit import AuditEventResponse, AuditEventListResponse, ToolInvocationResponse
+from app.schemas.audit import (
+    AuditEventResponse,
+    AuditEventListResponse,
+    ToolInvocationResponse,
+)
 
 logger = structlog.get_logger()
 router = APIRouter()
@@ -38,7 +43,11 @@ async def list_audit_events(
         count_query = count_query.where(AuditEvent.actor_type == actor_type)
 
     total = (await db.execute(count_query)).scalar() or 0
-    query = query.order_by(AuditEvent.created_at.desc()).offset((page - 1) * page_size).limit(page_size)
+    query = (
+        query.order_by(AuditEvent.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
     result = await db.execute(query)
     events = result.scalars().all()
 

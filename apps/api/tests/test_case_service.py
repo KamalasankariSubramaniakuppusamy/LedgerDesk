@@ -1,4 +1,5 @@
 """Test case service business logic."""
+
 from app.models.case import CaseStatus
 from app.services.case_service import STATUS_TRANSITIONS
 
@@ -34,10 +35,19 @@ class TestStatusTransitions:
 class TestCaseStatusEnum:
     def test_all_statuses_exist(self):
         expected = [
-            "created", "triaged", "context_retrieved", "tools_selected",
-            "tools_executed", "recommendation_generated", "safety_checked",
-            "awaiting_review", "approved", "rejected", "escalated",
-            "completed", "failed_safe",
+            "created",
+            "triaged",
+            "context_retrieved",
+            "tools_selected",
+            "tools_executed",
+            "recommendation_generated",
+            "safety_checked",
+            "awaiting_review",
+            "approved",
+            "rejected",
+            "escalated",
+            "completed",
+            "failed_safe",
         ]
         actual = [s.value for s in CaseStatus]
         assert set(expected) == set(actual)

@@ -1,4 +1,5 @@
 """Embedding generation for chunks."""
+
 import hashlib
 import json
 from pathlib import Path
@@ -14,7 +15,9 @@ def _cache_key(text: str) -> str:
     return hashlib.md5(text.encode()).hexdigest()
 
 
-async def generate_embedding_openai(text: str, api_key: str, model: str = "text-embedding-3-small") -> list[float]:
+async def generate_embedding_openai(
+    text: str, api_key: str, model: str = "text-embedding-3-small"
+) -> list[float]:
     """Generate embedding using OpenAI API."""
     import httpx
 
@@ -35,7 +38,9 @@ def generate_embedding_local(text: str, dim: int = 1536) -> list[float]:
     Uses TF-IDF-inspired hashing to create reproducible embeddings
     that preserve some semantic similarity for demo purposes.
     """
-    np.random.seed(int(hashlib.md5(text.lower().encode()).hexdigest()[:8], 16) % (2**31))
+    np.random.seed(
+        int(hashlib.md5(text.lower().encode()).hexdigest()[:8], 16) % (2**31)
+    )
 
     # Create a base embedding from word hashes
     words = text.lower().split()
@@ -56,7 +61,9 @@ def generate_embedding_local(text: str, dim: int = 1536) -> list[float]:
     return embedding.tolist()
 
 
-async def get_embedding(text: str, api_key: str | None = None, use_local: bool = True) -> list[float]:
+async def get_embedding(
+    text: str, api_key: str | None = None, use_local: bool = True
+) -> list[float]:
     """Get embedding for text, using local fallback if no API key."""
     if api_key and not use_local:
         # Check cache first

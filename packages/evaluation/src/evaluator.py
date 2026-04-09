@@ -1,4 +1,5 @@
 """Evaluation harness for the agent system."""
+
 import json
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -68,16 +69,18 @@ def load_eval_cases(data_dir: str | Path) -> list[EvalCase]:
     eval_cases = []
     for cd in cases_data:
         issue_type = cd.get("issue_type", "unknown")
-        eval_cases.append(EvalCase(
-            case_number=cd["case_number"],
-            title=cd["title"],
-            description=cd["description"],
-            issue_type=issue_type,
-            expected_issue_type=issue_type,
-            expected_action=expected_actions.get(issue_type, "escalate_to_senior"),
-            amount=cd.get("amount"),
-            priority=cd.get("priority", "medium"),
-        ))
+        eval_cases.append(
+            EvalCase(
+                case_number=cd["case_number"],
+                title=cd["title"],
+                description=cd["description"],
+                issue_type=issue_type,
+                expected_issue_type=issue_type,
+                expected_action=expected_actions.get(issue_type, "escalate_to_senior"),
+                amount=cd.get("amount"),
+                priority=cd.get("priority", "medium"),
+            )
+        )
 
     return eval_cases
 
@@ -91,7 +94,9 @@ def compute_summary(results: list[EvalResult]) -> EvalSummary:
     classification_correct = sum(1 for r in results if r.classification_correct is True)
     with_recommendation = sum(1 for r in results if r.recommendation_present)
     with_citations = sum(1 for r in results if r.citations_present)
-    confidences = [r.confidence_score for r in results if r.confidence_score is not None]
+    confidences = [
+        r.confidence_score for r in results if r.confidence_score is not None
+    ]
     total_tools = sum(r.tool_calls_made for r in results)
     completed = sum(1 for r in results if r.workflow_completed)
     safety_passed = [r for r in results if r.safety_gate_passed is not None]
@@ -107,7 +112,9 @@ def compute_summary(results: list[EvalResult]) -> EvalSummary:
         avg_confidence=sum(confidences) / len(confidences) if confidences else 0,
         avg_tool_calls=total_tools / n if n else 0,
         workflow_completion_rate=completed / n if n else 0,
-        safety_gate_pass_rate=safety_pass_count / len(safety_passed) if safety_passed else 0,
+        safety_gate_pass_rate=safety_pass_count / len(safety_passed)
+        if safety_passed
+        else 0,
         avg_duration_ms=sum(durations) / len(durations) if durations else 0,
         error_rate=with_errors / n if n else 0,
     )

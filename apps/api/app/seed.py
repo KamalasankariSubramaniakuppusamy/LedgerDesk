@@ -1,4 +1,5 @@
 """Seed database with sample data."""
+
 import asyncio
 import json
 import sys
@@ -16,7 +17,15 @@ from app.models.case import Case, CaseStatus, CaseStatusHistory
 from app.models.policy import PolicyDocument, PolicyChunk
 
 # Make the retrieval package importable from seed context
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent / "packages" / "retrieval" / "src"))
+sys.path.insert(
+    0,
+    str(
+        Path(__file__).resolve().parent.parent.parent.parent
+        / "packages"
+        / "retrieval"
+        / "src"
+    ),
+)
 from indexer import index_all_policies  # noqa: E402
 
 DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "sample_data"
@@ -29,14 +38,18 @@ async def seed():
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
         await conn.run_sync(Base.metadata.create_all)
         # HNSW index for fast approximate nearest-neighbour search on embeddings
-        await conn.execute(text("""
+        await conn.execute(
+            text("""
             CREATE INDEX IF NOT EXISTS ix_policy_chunks_embedding_hnsw
             ON policy_chunks
             USING hnsw (embedding vector_cosine_ops)
             WITH (m = 16, ef_construction = 64)
-        """))
+        """)
+        )
 
-    session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    session_factory = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
 
     async with session_factory() as session:
         # Seed users
@@ -94,12 +107,14 @@ async def seed():
                     created_by="seed",
                 )
                 session.add(case)
-                session.add(CaseStatusHistory(
-                    id=uuid.uuid4(),
-                    case_id=case_id,
-                    to_status=CaseStatus.CREATED.value,
-                    changed_by="seed",
-                ))
+                session.add(
+                    CaseStatusHistory(
+                        id=uuid.uuid4(),
+                        case_id=case_id,
+                        to_status=CaseStatus.CREATED.value,
+                        changed_by="seed",
+                    )
+                )
             print(f"Seeded {len(cases_data)} cases")
 
         # Seed policies
@@ -148,7 +163,9 @@ async def seed():
         api_key = settings.openai_api_key or None
         stats = await index_all_policies(session, api_key=api_key)
         await session.commit()
-        print(f"Indexed {stats['documents_indexed']} documents → {stats['total_chunks']} chunks")
+        print(
+            f"Indexed {stats['documents_indexed']} documents → {stats['total_chunks']} chunks"
+        )
         print("Seeding complete!")
 
     await engine.dispose()

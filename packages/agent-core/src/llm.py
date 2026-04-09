@@ -1,4 +1,5 @@
 """LLM client abstraction."""
+
 import json
 import re
 
@@ -12,7 +13,12 @@ logger = structlog.get_logger()
 class LLMClient:
     """OpenAI-compatible LLM client."""
 
-    def __init__(self, api_key: str, base_url: str = "https://api.openai.com/v1", model: str = "gpt-4o"):
+    def __init__(
+        self,
+        api_key: str,
+        base_url: str = "https://api.openai.com/v1",
+        model: str = "gpt-4o",
+    ):
         self.api_key = api_key
         self.base_url = base_url.rstrip("/")
         self.model = model
@@ -66,7 +72,7 @@ def parse_json_response(text: str) -> dict:
         pass
 
     # Try extracting from markdown code block
-    json_match = re.search(r'```(?:json)?\s*\n?(.*?)\n?```', text, re.DOTALL)
+    json_match = re.search(r"```(?:json)?\s*\n?(.*?)\n?```", text, re.DOTALL)
     if json_match:
         try:
             return json.loads(json_match.group(1))
@@ -74,11 +80,11 @@ def parse_json_response(text: str) -> dict:
             pass
 
     # Try finding first { to last }
-    start = text.find('{')
-    end = text.rfind('}')
+    start = text.find("{")
+    end = text.rfind("}")
     if start >= 0 and end > start:
         try:
-            return json.loads(text[start:end + 1])
+            return json.loads(text[start : end + 1])
         except json.JSONDecodeError:
             pass
 
@@ -138,29 +144,58 @@ class MockLLMClient:
 
     def _mock_tool_plan(self, prompt: str) -> dict:
         tools = [
-            {"tool_name": "get_transaction_timeline", "params": {"transaction_id": "from_case"}, "priority": 1, "reason": "Review transaction history"},
-            {"tool_name": "get_account_activity", "params": {"account_id": "from_case"}, "priority": 2, "reason": "Check account context"},
+            {
+                "tool_name": "get_transaction_timeline",
+                "params": {"transaction_id": "from_case"},
+                "priority": 1,
+                "reason": "Review transaction history",
+            },
+            {
+                "tool_name": "get_account_activity",
+                "params": {"account_id": "from_case"},
+                "priority": 2,
+                "reason": "Check account context",
+            },
         ]
         if "refund" in prompt.lower():
-            tools.append({"tool_name": "get_refund_status", "params": {"reference_id": "from_case"}, "priority": 1, "reason": "Check refund status"})
+            tools.append(
+                {
+                    "tool_name": "get_refund_status",
+                    "params": {"reference_id": "from_case"},
+                    "priority": 1,
+                    "reason": "Check refund status",
+                }
+            )
         if "settlement" in prompt.lower():
-            tools.append({"tool_name": "get_settlement_status", "params": {"reference_id": "from_case"}, "priority": 1, "reason": "Check settlement"})
+            tools.append(
+                {
+                    "tool_name": "get_settlement_status",
+                    "params": {"reference_id": "from_case"},
+                    "priority": 1,
+                    "reason": "Check settlement",
+                }
+            )
 
-        return {"tools": tools, "reasoning": "Selected tools based on case type and available identifiers."}
+        return {
+            "tools": tools,
+            "reasoning": "Selected tools based on case type and available identifiers.",
+        }
 
     def _mock_decision(self, prompt: str) -> dict:  # noqa: C901
         """Generate a detailed, case-specific mock recommendation."""
         p = prompt.lower()
 
         # ── Determine action & confidence ──────────────────────────────
-        if "refund" in p and ("exceeds" in p or "greater than" in p or "more than" in p):
-            action      = "initiate_merchant_dispute"
-            confidence  = 0.85
-            risk        = "medium"
-            res_days    = 10
+        if "refund" in p and (
+            "exceeds" in p or "greater than" in p or "more than" in p
+        ):
+            action = "initiate_merchant_dispute"
+            confidence = 0.85
+            risk = "medium"
+            res_days = 10
             needs_merch = True
-            needs_ch    = True
-            approval    = "analyst"
+            needs_ch = True
+            approval = "analyst"
             rationale = (
                 "The refund amount posted to this account exceeds the original transaction charge, "
                 "which constitutes an overpayment error that falls squarely within the merchant dispute "
@@ -207,13 +242,13 @@ class MockLLMClient:
                 },
             ]
         elif "duplicate" in p or "twice" in p or "double" in p or "same charge" in p:
-            action      = "initiate_merchant_dispute"
-            confidence  = 0.88
-            risk        = "medium"
-            res_days    = 7
+            action = "initiate_merchant_dispute"
+            confidence = 0.88
+            risk = "medium"
+            res_days = 7
             needs_merch = True
-            needs_ch    = True
-            approval    = "analyst"
+            needs_ch = True
+            approval = "analyst"
             rationale = (
                 "The transaction timeline reveals two identical charge postings from the same merchant "
                 "within a short window, which is a strong indicator of a duplicate billing event. "
@@ -258,13 +293,13 @@ class MockLLMClient:
                 },
             ]
         elif "authorization" in p or "pending" in p or "hold" in p:
-            action      = "release_authorization"
-            confidence  = 0.82
-            risk        = "low"
-            res_days    = 3
+            action = "release_authorization"
+            confidence = 0.82
+            risk = "low"
+            res_days = 3
             needs_merch = True
-            needs_ch    = False
-            approval    = "analyst"
+            needs_ch = False
+            approval = "analyst"
             rationale = (
                 "The account shows a pending authorization hold that has exceeded the standard "
                 "settlement window. Card network rules specify that authorizations must settle within "
@@ -299,13 +334,13 @@ class MockLLMClient:
                 },
             ]
         elif "settlement" in p or "delay" in p:
-            action      = "initiate_refund_tracer"
-            confidence  = 0.76
-            risk        = "low"
-            res_days    = 5
+            action = "initiate_refund_tracer"
+            confidence = 0.76
+            risk = "low"
+            res_days = 5
             needs_merch = False
-            needs_ch    = True
-            approval    = "analyst"
+            needs_ch = True
+            approval = "analyst"
             rationale = (
                 "The transaction has posted to the cardholder's account but the corresponding "
                 "settlement funds have not been received within the expected clearing window. "
@@ -341,13 +376,13 @@ class MockLLMClient:
                 },
             ]
         else:
-            action      = "escalate_to_senior"
-            confidence  = 0.65
-            risk        = "medium"
-            res_days    = 3
+            action = "escalate_to_senior"
+            confidence = 0.65
+            risk = "medium"
+            res_days = 3
             needs_merch = False
-            needs_ch    = False
-            approval    = "senior_analyst"
+            needs_ch = False
+            approval = "senior_analyst"
             rationale = (
                 "The evidence gathered from the transaction timeline and account activity tools "
                 "does not provide sufficient clarity to apply a standard resolution path with "

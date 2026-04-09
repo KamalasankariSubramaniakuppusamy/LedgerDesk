@@ -1,4 +1,5 @@
 """Case management endpoints."""
+
 import uuid
 
 import structlog
@@ -11,8 +12,13 @@ from app.models.case import Case, CaseStatus, CaseStatusHistory, CaseNote
 from app.models.audit import AuditEvent
 from app.models.agent import Recommendation
 from app.schemas.case import (
-    CaseCreate, CaseUpdate, CaseResponse, CaseListResponse,
-    CaseNoteCreate, CaseNoteResponse, StatusHistoryResponse,
+    CaseCreate,
+    CaseUpdate,
+    CaseResponse,
+    CaseListResponse,
+    CaseNoteCreate,
+    CaseNoteResponse,
+    StatusHistoryResponse,
 )
 from app.schemas.audit import AnalystActionCreate
 from app.schemas.recommendation import RecommendationResponse
@@ -28,6 +34,7 @@ DEMO_ANALYST_ID = uuid.UUID("00000000-0000-0000-0000-000000000002")
 
 def _generate_case_number() -> str:
     import random
+
     return f"CSE-2024-{random.randint(10000, 99999):05d}"
 
 
@@ -54,12 +61,18 @@ async def list_cases(
         query = query.where(Case.issue_type == issue_type)
         count_query = count_query.where(Case.issue_type == issue_type)
     if search:
-        search_filter = Case.title.ilike(f"%{search}%") | Case.case_number.ilike(f"%{search}%")
+        search_filter = Case.title.ilike(f"%{search}%") | Case.case_number.ilike(
+            f"%{search}%"
+        )
         query = query.where(search_filter)
         count_query = count_query.where(search_filter)
 
     total = (await db.execute(count_query)).scalar() or 0
-    query = query.order_by(Case.created_at.desc()).offset((page - 1) * page_size).limit(page_size)
+    query = (
+        query.order_by(Case.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
     result = await db.execute(query)
     cases = result.scalars().all()
 
@@ -125,15 +138,21 @@ async def list_escalated_cases(
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
-    query       = select(Case).where(Case.status == CaseStatus.ESCALATED)
+    query = select(Case).where(Case.status == CaseStatus.ESCALATED)
     count_query = select(func.count(Case.id)).where(Case.status == CaseStatus.ESCALATED)
-    total       = (await db.execute(count_query)).scalar() or 0
-    query       = query.order_by(Case.created_at.desc()).offset((page - 1) * page_size).limit(page_size)
-    result      = await db.execute(query)
-    cases       = result.scalars().all()
+    total = (await db.execute(count_query)).scalar() or 0
+    query = (
+        query.order_by(Case.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
+    result = await db.execute(query)
+    cases = result.scalars().all()
     return CaseListResponse(
         cases=[CaseResponse.model_validate(c) for c in cases],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -176,7 +195,9 @@ async def get_case_history(case_id: uuid.UUID, db: AsyncSession = Depends(get_db
 
 
 @router.get("/{case_id}/recommendations", response_model=list[RecommendationResponse])
-async def get_case_recommendations(case_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+async def get_case_recommendations(
+    case_id: uuid.UUID, db: AsyncSession = Depends(get_db)
+):
     result = await db.execute(
         select(Recommendation)
         .where(Recommendation.case_id == case_id)
@@ -211,7 +232,9 @@ async def add_case_note(
 @router.get("/{case_id}/notes", response_model=list[CaseNoteResponse])
 async def get_case_notes(case_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
-        select(CaseNote).where(CaseNote.case_id == case_id).order_by(CaseNote.created_at.desc())
+        select(CaseNote)
+        .where(CaseNote.case_id == case_id)
+        .order_by(CaseNote.created_at.desc())
     )
     return [CaseNoteResponse.model_validate(n) for n in result.scalars().all()]
 

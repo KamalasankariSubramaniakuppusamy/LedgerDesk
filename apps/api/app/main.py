@@ -1,4 +1,5 @@
 """LedgerDesk API - Agentic Financial Operations Copilot."""
+
 from contextlib import asynccontextmanager
 
 import structlog
@@ -7,7 +8,18 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.logging import setup_logging
-from app.routers import cases, policies, tools, workflow, audit, health, metrics, retrieval, auth, users
+from app.routers import (
+    cases,
+    policies,
+    tools,
+    workflow,
+    audit,
+    health,
+    metrics,
+    retrieval,
+    auth,
+    users,
+)
 
 logger = structlog.get_logger()
 
@@ -29,8 +41,12 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000",
-                   "http://localhost:3001", "http://127.0.0.1:3001"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -44,5 +60,5 @@ app.include_router(workflow.router, prefix="/api/v1/workflow", tags=["Workflow"]
 app.include_router(audit.router, prefix="/api/v1/audit", tags=["Audit"])
 app.include_router(metrics.router, prefix="/api/v1/metrics", tags=["Metrics"])
 app.include_router(retrieval.router, prefix="/api/v1/retrieval", tags=["Retrieval"])
-app.include_router(auth.router,  prefix="/api/v1/auth",  tags=["Auth"])
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])

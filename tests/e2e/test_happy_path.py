@@ -8,6 +8,7 @@ Tests the complete workflow:
 5. Verify case completed
 6. Verify audit trail
 """
+
 import pytest
 import httpx
 
@@ -24,16 +25,19 @@ class TestHappyPath:
         """End-to-end: create -> workflow -> review -> approve -> complete."""
 
         # Step 1: Create a case
-        create_resp = api_client.post("/api/v1/cases", json={
-            "title": "E2E Test - Suspected Duplicate Charge",
-            "description": "Cardholder reports two charges of $50.00 from the same merchant on the same day. Only one purchase was made.",
-            "priority": "medium",
-            "issue_type": "duplicate_charge",
-            "transaction_id": "TXN-9382741",
-            "account_id": "ACCT-4421889",
-            "merchant_name": "Test Merchant",
-            "amount": 50.00,
-        })
+        create_resp = api_client.post(
+            "/api/v1/cases",
+            json={
+                "title": "E2E Test - Suspected Duplicate Charge",
+                "description": "Cardholder reports two charges of $50.00 from the same merchant on the same day. Only one purchase was made.",
+                "priority": "medium",
+                "issue_type": "duplicate_charge",
+                "transaction_id": "TXN-9382741",
+                "account_id": "ACCT-4421889",
+                "merchant_name": "Test Merchant",
+                "amount": 50.00,
+            },
+        )
         assert create_resp.status_code == 201
         case = create_resp.json()
         case_id = case["id"]
@@ -63,11 +67,14 @@ class TestHappyPath:
         assert rec["recommended_action"] != ""
 
         # Step 5: Approve the recommendation
-        action_resp = api_client.post(f"/api/v1/cases/{case_id}/actions", json={
-            "action_type": "approve",
-            "recommendation_id": rec["id"],
-            "reason": "Evidence supports recommendation",
-        })
+        action_resp = api_client.post(
+            f"/api/v1/cases/{case_id}/actions",
+            json={
+                "action_type": "approve",
+                "recommendation_id": rec["id"],
+                "reason": "Evidence supports recommendation",
+            },
+        )
         assert action_resp.status_code == 201
         action_data = action_resp.json()
         assert action_data["success"] is True
@@ -82,7 +89,9 @@ class TestHappyPath:
         audit_resp = api_client.get("/api/v1/audit", params={"case_id": case_id})
         assert audit_resp.status_code == 200
         audit_data = audit_resp.json()
-        assert audit_data["total"] >= 3  # At least: created, workflow steps, status changes
+        assert (
+            audit_data["total"] >= 3
+        )  # At least: created, workflow steps, status changes
 
         # Step 8: Verify status history
         history_resp = api_client.get(f"/api/v1/cases/{case_id}/history")

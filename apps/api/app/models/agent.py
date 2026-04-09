@@ -1,4 +1,5 @@
 """Agent run, tool invocation, recommendation, and retrieval models."""
+
 import uuid
 
 from sqlalchemy import Float, ForeignKey, Integer, String, Text
@@ -17,8 +18,12 @@ class AgentRun(TimestampMixin, Base):
     case_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("cases.id"), nullable=False
     )
-    agent_type: Mapped[str] = mapped_column(String(100), nullable=False)  # triage, retrieval, tool_planner, decision, safety, writer
-    status: Mapped[str] = mapped_column(String(50), default="running")  # running, completed, failed, timeout
+    agent_type: Mapped[str] = mapped_column(
+        String(100), nullable=False
+    )  # triage, retrieval, tool_planner, decision, safety, writer
+    status: Mapped[str] = mapped_column(
+        String(50), default="running"
+    )  # running, completed, failed, timeout
     input_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     output_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -45,7 +50,9 @@ class ToolInvocation(TimestampMixin, Base):
     tool_type: Mapped[str] = mapped_column(String(20), default="read")  # read, write
     input_params: Mapped[dict] = mapped_column(JSON, nullable=False)
     output_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)
-    status: Mapped[str] = mapped_column(String(50), default="pending")  # pending, success, error, timeout
+    status: Mapped[str] = mapped_column(
+        String(50), default="pending"
+    )  # pending, success, error, timeout
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     trace_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
@@ -95,7 +102,9 @@ class Recommendation(TimestampMixin, Base):
     policy_citations: Mapped[list | None] = mapped_column(JSON, nullable=True)
     evidence_summary: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     structured_decision: Mapped[dict | None] = mapped_column(JSON, nullable=True)
-    required_approval_level: Mapped[str] = mapped_column(String(50), default="analyst")  # analyst, senior_analyst, supervisor
+    required_approval_level: Mapped[str] = mapped_column(
+        String(50), default="analyst"
+    )  # analyst, senior_analyst, supervisor
     safety_gate_passed: Mapped[bool | None] = mapped_column(nullable=True)
     safety_gate_details: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 

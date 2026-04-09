@@ -1,12 +1,11 @@
 """Case and related models."""
+
 import enum
 import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import (
-    Boolean, DateTime, Enum, ForeignKey, Numeric, String, Text, text
-)
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Numeric, String, Text, text
 from sqlalchemy.dialects.postgresql import JSON, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -60,15 +59,16 @@ class Case(AuditMixin, Base):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[CaseStatus] = mapped_column(
         Enum(CaseStatus, values_callable=lambda e: [x.value for x in e]),
-        default=CaseStatus.CREATED, nullable=False
+        default=CaseStatus.CREATED,
+        nullable=False,
     )
     priority: Mapped[CasePriority] = mapped_column(
         Enum(CasePriority, values_callable=lambda e: [x.value for x in e]),
-        default=CasePriority.MEDIUM, nullable=False
+        default=CasePriority.MEDIUM,
+        nullable=False,
     )
     issue_type: Mapped[IssueType | None] = mapped_column(
-        Enum(IssueType, values_callable=lambda e: [x.value for x in e]),
-        nullable=True
+        Enum(IssueType, values_callable=lambda e: [x.value for x in e]), nullable=True
     )
 
     # Financial context
@@ -94,7 +94,11 @@ class Case(AuditMixin, Base):
 
     # Relationships
     assignee = relationship("User", back_populates="assigned_cases")
-    status_history = relationship("CaseStatusHistory", back_populates="case", order_by="CaseStatusHistory.created_at")
+    status_history = relationship(
+        "CaseStatusHistory",
+        back_populates="case",
+        order_by="CaseStatusHistory.created_at",
+    )
     entities = relationship("CaseEntity", back_populates="case")
     retrieval_results = relationship("CaseRetrievalResult", back_populates="case")
     tool_invocations = relationship("ToolInvocation", back_populates="case")
@@ -154,7 +158,9 @@ class CaseNote(AuditMixin, Base):
         UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    note_type: Mapped[str] = mapped_column(String(50), default="general")  # general, escalation, resolution, internal
+    note_type: Mapped[str] = mapped_column(
+        String(50), default="general"
+    )  # general, escalation, resolution, internal
 
     case = relationship("Case", back_populates="notes")
     author = relationship("User", back_populates="notes")

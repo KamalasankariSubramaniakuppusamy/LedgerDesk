@@ -1,4 +1,5 @@
 """Workflow orchestration endpoints."""
+
 import uuid
 
 import structlog
@@ -28,7 +29,16 @@ async def run_workflow(req: WorkflowRunRequest, db: AsyncSession = Depends(get_d
     """Run the full agent workflow on a case."""
     import sys
     from pathlib import Path
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent / "packages" / "agent-core" / "src"))
+
+    sys.path.insert(
+        0,
+        str(
+            Path(__file__).resolve().parent.parent.parent.parent.parent
+            / "packages"
+            / "agent-core"
+            / "src"
+        ),
+    )
 
     from orchestrator import run_full_workflow
 
